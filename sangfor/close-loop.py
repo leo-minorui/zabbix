@@ -22,7 +22,8 @@ import openpyxl
 import datetime
 
 flag_list = []   # 设置r_eventid 标记  每次一次查询recovery eventid都对应r_eventid 减少一次查询数据库的次数
-
+closed_loop_list = []   # 设置列表记录已闭环的事件ID
+closing_loop_list = []   # 设置记录待闭环的事件ID
 def connect_db():
     connection = pymysql.connect(host='10.127.127.11',
                                  user='root',
@@ -34,7 +35,7 @@ def connect_db():
 def Reset_time():
 
     # 获取当前零点时间
-    time_start1 = datetime.datetime.now()  # 获取现在时间
+    time_start1 = datetime.datetime.now() - datetime.timedelta(days = 1)  # 获取现在时间
     time_start2 = time_start1.strftime("%Y-%m-%d")  # 格式化字符串时间
     time_start3 = time.mktime(time.strptime(time_start2, "%Y-%m-%d"))  # 转化成时间戳
 
@@ -75,46 +76,38 @@ def match_id():
    # sql2 = "select eventid, r_eventid from event_recovery"
     with connection1.cursor() as cursor1:
         cursor1.execute(sql1, (start, end))
-        all_info = cursor1.fetchall()
+
    #     print(all_info)
-        for i in range(0, len(all_info)):
-            print(all_info[i])
-            with connection2.cursor() as cursor2:
-                sql2 = "select eventid, r_eventid from event_recovery"
+        while True:
+            one_info = cursor1.fetchone()
 
+            if one_info != None:
 
-            # if one_info != None:
-            #
-            #     # flag_list.append(one_info[1])   # 添加对应r_eventid到标记list中
-            #     if judge_flag(one_info[0]) == 0:
-            #         print(one_info)  # 检查点
-            #         with connection2.cursor() as cursor2:
-            #             sql2 = "select r_eventid from event_recovery where eventid=%s"  # 捞取对应recovery id信息
-            #             cursor2.execute(sql2, (one_info[0]))
-            #             # print(cursor2.fetchall())  #  检查点
-            #             r_eventid = cursor2.fetchall()
-            #             # print(r_eventid)  # 检查点
-            #             if r_eventid is not None :
-            #
-            #                 # 如果不返回空值 说明该告警已闭环
-            #                 print("该告警已闭环，恢复id为", r_eventid[0][0])
-            #                 flag_list.append(r_eventid[0][0])
-            #
-            #             else:
-            #                 # 如果cursor2.fetchall()返回空值 那么有两种可能 1.告警没有闭环 2.告警对应的恢复事件
-            #                 sql3 = "select eventid from event_recovery where r_eventid=%s"  # 再加一个判断 对于2的结果判断
-            #                 cursor2.execute(sql3, (one_info[0]))
-            #                 # print(cursor2.fetchall())  #  检查点
-            #                 if cursor2.fetchall() is not None:
-            #                     print("这个告警恢复事件id:", one_info[0][0])
-            #
-            #                     # print("对应的告警id:", cursor2.fetchall())
-            #     else:
-            #          pass
-            #     # flag_list.append(cursor.fetchall())  # eventid 对应的 r_eventid 放入list列表 等待配对
-            #
-            # else:
-            #     break
+                # flag_list.append(one_info[1])   # 添加对应r_eventid到标记list中
+                if judge_flag(one_info[0]) == 0:  # 判断之前发生的告警在recovery表中对应的恢复id是否出现 出现则表明之前出现的告警到现在有闭环了
+                    print(one_info)  # 检查点
+                    with connection2.cursor() as cursor2:
+                        sql2 = "select r_eventid from event_recovery where eventid=%s"  # 捞取对应recovery id信息
+                        cursor2.execute(sql2, (one_info[0]))
+                        # print(cursor2.fetchall())  #  检查点
+                        r_eventid = cursor2.fetchall()
+                        # print(r_eventid)  # 检查点
+                        if r_eventid != () :  # 判断是否为空元组
+
+                            # 如果不返回空值 说明该告警已闭环
+                            print("该告警已闭环，恢复id为", r_eventid[0][0])
+                            flag_list.append(r_eventid[0][0])
+                        else:
+                            # 如果cursor2.fetchall()返回空值 那么只有一种可能 1.告警没有闭环
+                            # print(cursor2.fetchall())  #  检查点
+                            print("这个告警仍没有闭环:", one_info[0])
+
+                                # print("对应的告警id:", cursor2.fetchall())
+                else:
+                     pass
+                # flag_list.append(cursor.fetchall())  # eventid 对应的 r_eventid 放入list列表 等待配对
+            else:
+                break
 
 
 
