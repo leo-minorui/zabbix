@@ -2,6 +2,8 @@ import pymysql
 import xlrd
 import csv
 import time
+import pandas
+import openpyxl
 
 savepath = r'D:\Users\Sangfor\Desktop\sangfor\zabbix\test.csv'
 # import xlwings as xw

@@ -34,16 +34,17 @@ def connect_db():
 
 def Reset_time():
 
+    # 获取现在时间
+    today = datetime.datetime.now().date()
     # 获取当前零点时间
-    time_start1 = datetime.datetime.now() - datetime.timedelta(days = 1)  # 获取现在时间
-    time_start2 = time_start1.strftime("%Y-%m-%d")  # 格式化字符串时间
-    time_start3 = time.mktime(time.strptime(time_start2, "%Y-%m-%d"))  # 转化成时间戳
+    time_start1 = datetime.datetime.now().replace(year=today.year, month=today.month, day=today.day, hour=0, minute=0, second=0)
+    time_start2 = time_start1.timetuple()  # 格式化字符串时间
+    time_start3 = time.mktime(time_start2)  # 转化成时间戳
 
-    # 获取当天23:59
-    time_end1 = datetime.datetime.fromtimestamp(time_start3)
-    time_end2 = time_end1 + datetime.timedelta(hours= 23, minutes= 59)
-    time_end2 = time_end2.strftime("%Y-%m-%d %H:%M")
-    time_end3 = time.mktime(time.strptime(time_end2, "%Y-%m-%d %H:%M"))
+    # 获取当天23:59:59
+    time_end1 = datetime.datetime.now().replace(year=today.year, month=today.month, day=today.day, hour=23, minute=59, second=59)
+    time_end2 = time_end1.timetuple()
+    time_end3 = time.mktime(time_end2)
 
     return time_start3, time_end3
 
@@ -66,8 +67,8 @@ def match_id():
     '''
 
 
-    connection1 = connect_db()
-    connection2 = connect_db()
+    connection1 = connect_db()   #  用在捞取当前发生event
+    connection2 = connect_db()   #  用在捞取eventid 及 r_eventid
 
     start, end = Reset_time()
     print(start, end)
@@ -81,26 +82,31 @@ def match_id():
         while True:
             one_info = cursor1.fetchone()
 
-            if one_info != None:
+            if one_info != None:    # 跳出循环条件
 
                 # flag_list.append(one_info[1])   # 添加对应r_eventid到标记list中
                 if judge_flag(one_info[0]) == 0:  # 判断之前发生的告警在recovery表中对应的恢复id是否出现 出现则表明之前出现的告警到现在有闭环了
                     print(one_info)  # 检查点
                     with connection2.cursor() as cursor2:
+
+                        #  报警随时发生 认为把一天的报警信息提取出来 可能会出现 昨天的告警信息 恢复告警今天才出现
                         sql2 = "select r_eventid from event_recovery where eventid=%s"  # 捞取对应recovery id信息
+
                         cursor2.execute(sql2, (one_info[0]))
                         # print(cursor2.fetchall())  #  检查点
                         r_eventid = cursor2.fetchall()
                         # print(r_eventid)  # 检查点
-                        if r_eventid != () :  # 判断是否为空元组
+                        if r_eventid != ():  # 判断是否为空元组
 
                             # 如果不返回空值 说明该告警已闭环
                             print("该告警已闭环，恢复id为", r_eventid[0][0])
                             flag_list.append(r_eventid[0][0])
+                            closed_loop_list.append(r_eventid[0][0])
                         else:
                             # 如果cursor2.fetchall()返回空值 那么只有一种可能 1.告警没有闭环
                             # print(cursor2.fetchall())  #  检查点
                             print("这个告警仍没有闭环:", one_info[0])
+                            closing_loop_list.append(one_info[0])
 
                                 # print("对应的告警id:", cursor2.fetchall())
                 else:
@@ -109,9 +115,25 @@ def match_id():
             else:
                 break
 
+def analyze_event():
+    connection = connect_db()
+    print("当天已闭环数量%s" % len(closed_loop_list))
+    print("当天未闭环数量%s" % len(closing_loop_list))
+
+    with connection.cursor() as cursor:
+        print("未闭环事件详细信息如下：")
+        for i in range(0, len(closing_loop_list)):
+            sql = "select eventid, clock, name from events where eventid=%s"
+            cursor.execute(sql, (closing_loop_list[i]))
+            info = cursor.fetchall()
+          #  print(info)  # 检查点
+
+            print("事件id:{}, 事件发生时间:{}, 事件内容:{}".format(info[0][0], time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(info[0][1]+28800)), info[0][2]))
+
 
 
 if __name__ == "__main__":
     match_id()
+    analyze_event()
 
 
