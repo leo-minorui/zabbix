@@ -9,15 +9,11 @@
 
 '''
 
-
-
-
-
 #########global settings########
 zabbix_pid_path="/var/run/zabbix"
 zabbix_agentd_log_path="/var/log/zabbix"
-zabbix_install_path="/opt/zabbix"
-IP="100.64.63.2"
+zabbix_install_path="/etc/zabbix"
+
 ########shell working space#####
 function createZabbixUser ()
 {
@@ -47,13 +43,6 @@ function InitializationEnvironment ()
                 exit 0
         fi
  
-                cd /opt/zabbix
-                if [ $? -eq 0 ];then
-                        chown zabbix:zabbix ./script
-                else
-                        exit 0
-                fi
- 
         else
                 echo -e "zabbix install path is not exist,plese install zabbix_agent first!"
                 exit 0
@@ -67,17 +56,16 @@ function InitializationEnvironment ()
 function configZabbix ()
 {
         echo -e "start to config zabbix_agentd...\n"
-        cd /opt/zabbix/conf/
+        cd /etc/zabbix/conf/
         if [ $? -eq 0 ];then
         cat >./zabbix_agentd.conf <<EOF
 PidFile=/var/run/zabbix/zabbix_agentd.pid
 LogFile=/var/log/zabbix/zabbix_agentd.log
 LogFileSize=0
 Server=10.127.127.40
-Hostname=100.64.63.2
+Hostname=100.66.255.201
 EnableRemoteCommands=1
 UnsafeUserParameters=1
-UserParameter=vAC_number[*],/opt/zabbix/script/send_vAC_number.sh
 EOF
         else
                 echo -e "cd /opt/zabbix/conf/ faild!"
