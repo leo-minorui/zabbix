@@ -35,7 +35,6 @@ InitializationEnvironment()
                 chown zabbix:zabbix zabbix
         else
                 echo -e "create /var/run/zabbix content faild!"
-                exit 1
         fi
         cd /var/log/
         if [ $? -eq 0 ];then
@@ -43,7 +42,6 @@ InitializationEnvironment()
                 chown zabbix:zabbix zabbix
         else
                 echo -e "cd /var/log content faild!"
-                exit 1
         fi
  
         # else
@@ -54,7 +52,7 @@ InitializationEnvironment()
         iptables -I INPUT -p tcp --dport 10050 -j ACCEPT
  
         echo -e "Initialization environment of zabbix success.. \n"
-        exit 0
+        return 0
 }
  
 configZabbix()
