@@ -66,7 +66,7 @@ LogFile=/var/log/zabbix/zabbix_agentd.log
 LogFileSize=0
 Server=10.127.127.40
 ServerActive=10.127.127.40
-Hostname=100.66.255.201
+Hostname=bj_hci203
 EnableRemoteCommands=1
 UnsafeUserParameters=1
 EOF
