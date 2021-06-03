@@ -7,6 +7,9 @@
 2.创建环境
 3.配置zabbix
 
+缺陷：
+还没有安装包程序
+
 因为主机重启以后/var/run下创建的文件夹会消失，
 开机启动服务之前要重新检查一遍文件夹是否存在
 
@@ -64,8 +67,8 @@ configZabbix()
 PidFile=/var/run/zabbix/zabbix_agentd.pid
 LogFile=/var/log/zabbix/zabbix_agentd.log
 LogFileSize=0
-Server=10.127.127.40
-ServerActive=10.127.127.40
+Server=100.66.235.1
+ServerActive=100.66.235.1
 Hostname=bj_hci203
 EnableRemoteCommands=1
 UnsafeUserParameters=1
