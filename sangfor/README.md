@@ -12,3 +12,37 @@ sudo sed -e 's|^mirrorlist=|#mirrorlist=|g' \
 
 ```
 
+### 建立SFTP用户数据传输
+`IP:10.127.127.80` 
+
+路径：`/data/ftpfile`
+
+账户密码: `ftpuser/123456`
+
+```shell
+使用方式：
+1. 同一VPN环境下：
+sftp ftpuser@10.127.127.80
+
+2. 不同VPN环境下，通过外网映射 端口为2200
+sftp -P 2200 ftpuser@121.46.4.117
+
+pwd：查看sftp服务器默认的当前目录
+lpwd： 查看linux本地目录
+
+ls
+lls
+
+put a.txt ：把linux当前目录下的a.txt文件上传到sftp服务器的当前目录下
+get b.txt ：这个是把sftp服务器当前目录下的b.txt文件下载到linux当前目录下
+
+quit：推出
+
+help：帮助
+
+
+```
+
+### SASE POP点
+1. 一定要勾选 ---主机启动时，自动运行此虚拟机
+2. 跳板机要平均分配到各个HCI上

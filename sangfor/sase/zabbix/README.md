@@ -1,12 +1,6 @@
 ### zabbix安装注意事项
 
-在HCI添加agent时，要添加开机启动脚本，防止大量主机挂掉后需挨个重启服务
-
-在`/etc/init.d`中添加 `enable_start.sh` 脚本
-```shell
-/etc/zabbix/sbin/zabbix_agentd -c ../conf/zabbix_agentd.conf
-```
-赋予`+x` 权限后 再通过`/etc/rc2.d` 设置软链接 `ln -s /etc/inid.d/zabbix.sh /etc/rc2.d/Sxxxxx(自命名)`
+先把zabbix_agent安装包放到sftp服务器上去
 
 1.DP的内置系统为`ubuntu`系统且支持`systemctl`和`apt-get`，在生产环境中采用便捷、高效的策略。遂采用软件源的方式安装。也可以采用守护进程进行开机重启。
 
@@ -59,7 +53,21 @@ EOF
 
 
 
-### 目前遇到的问题
-1. HCI上的虚拟机没有勾选开机启动   ---待解决
-2. HCI主机重启zabbix agent不能自启动  ---待解决
+### 监控优化
+1. HCI上的虚拟机没有勾选开机启动  ---待解决
+
+2. HCI主机重启zabbix agent不能自启动
+   
+    解决办法：
+    ```shell
+    1. cd /boot/firmware/current/custom
+    2. 在这个custom下建一个类似06-sp-XXXX开对的目录(数字顺着前面来不一定是06，sp是一定的)
+    3. mkdir -p /boot/firmware/current/custom/06-sp-XXXX/sf/etc/init.d
+    4. 把需要重启的脚本放入 /boot/firmware/current/custom/06-sp-XXXX/sf/etc/init.d
+    5. mkdir /boot/firmware/current/custom/06-sp-XXXX/sf/etc/rc.d
+    6. cd /boot/firmware/current/custom/06-sp-XXXX/sf/etc/rc.d
+    7. ln -s ../init.d/xxx.sh S200xxx
+    ```
+   **注意：因为/etc挂载在temps分区下，不能把agent安装在此目录下，建议安装/root/zabbix下**
 3. HCI主机重启 vac只能等待半夜12点服务重启 ---待解决
+
