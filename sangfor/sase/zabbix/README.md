@@ -20,7 +20,7 @@ deb-src http://mirrors.163.com/ubuntu/ wily-updates main restricted universe mul
 deb-src http://mirrors.163.com/ubuntu/ wily-proposed main restricted universe multiverse
 deb-src http://mirrors.163.com/ubuntu/ wily-backports main restricted universe multiverse
 ```
-
+| 15.10的源缺少包，无法通过软件源的形式安装zabbix-agent
 
 
 ### **配置清华镜像源**
@@ -50,6 +50,16 @@ deb-src https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/5.2/ubuntu xenial mai
 加入key
 curl -o - "http://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix-official-repo.key" | apt-key add -
 ```
+2.HCIAgent
+Centos7 配置zabbix-agent源
+```shell
+cd /etc/yum.repos.d/
+wget https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/5.2/rhel/7/x86_64/zabbix-release-5.2-1.el7.noarch.rpm
+
+rpm -ivh zabbix-release-5.2-1.el7.noarch.rpm
+```
+
+
 ### **配置zabbix-agent文件**
 ```shell
 cat >/etc/zabbix/zabbix_agentd.conf<<EOF
