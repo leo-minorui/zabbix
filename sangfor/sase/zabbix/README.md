@@ -8,6 +8,7 @@ DP为15.10版本
 采用网易镜像源
 
 ```shell
+cat >/etc/apt/sources.list<<EOF
 deb http://mirrors.163.com/ubuntu/ wily main restricted universe multiverse
 deb http://mirrors.163.com/ubuntu/ wily-security main restricted universe multiverse
 deb http://mirrors.163.com/ubuntu/ wily-updates main restricted universe multiverse
@@ -19,7 +20,28 @@ deb-src http://mirrors.163.com/ubuntu/ wily-updates main restricted universe mul
 deb-src http://mirrors.163.com/ubuntu/ wily-proposed main restricted universe multiverse
 deb-src http://mirrors.163.com/ubuntu/ wily-backports main restricted universe multiverse
 ```
+
+
+
 ### **配置清华镜像源**
+```shell
+cat >/etc/apt/sources.list<<EOF
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-updates main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-security main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-security main restricted universe multiverse
+
+# 预发布软件源，不建议启用
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-proposed main restricted universe multiverse
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ trusty-proposed main restricted universe multiverse
+EOF
+```
+
 ```shell
 cat > /etc/apt/sources.list.d/zabbix.list<<EOF
 deb https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/5.2/ubuntu xenial main
