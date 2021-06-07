@@ -50,7 +50,7 @@ deb-src https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/5.2/ubuntu xenial mai
 加入key
 curl -o - "http://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix-official-repo.key" | apt-key add -
 ```
-2.HCIAgent
+2.HCIAgent/POP_agent/PoPloc
 Centos7 配置zabbix-agent源
 ```shell
 cd /etc/yum.repos.d/
