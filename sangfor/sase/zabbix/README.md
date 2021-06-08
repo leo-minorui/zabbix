@@ -72,7 +72,8 @@ Hostname=被监控主机
 EnableRemoteCommands=1
 UnsafeUserParameters=1
 EOF
-
+sed -i 's/Hostname=被监控主机/Hostname=自定义/g' install_zabbix-agent_HCI.sh
+sed -i 's/Hostname=被监控主机/Hostname=自定义/g' autostart_zabbix-HCI.sh
 ```
 ### **配置服务**
 `systemctl status zabbix-agent`

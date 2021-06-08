@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # HCI /root挂载的是永久分区
-
+iptables -I INPUT -p tcp --dport 10050 -j ACCEPT
 cd /root/
 #sftp -P 2200 ftpuser@121.46.4.117
 #put zabbix_agent-5.2.1-linux-3.0-amd64-static.tar.gz
@@ -25,9 +25,9 @@ useradd -s /usr/sbin/nologin zabbix -g zabbix
 
 ##创建zabbix PID及log文件夹并赋权
 mkdir -p /var/run/zabbix
-chown zabbix:zabbix /var/run/zabbix
+chown -R zabbix:zabbix /var/run/zabbix
 mkdir -p /var/log/zabbix 
-chown zabbix:zabbix /var/run/zabbix
+chown -R zabbix:zabbix /var/log/zabbix
 
 #配置zabbix
 cat >/root/zabbix/conf/zabbix_agentd.conf<<EOF
@@ -36,10 +36,14 @@ LogFile=/var/log/zabbix/zabbix_agentd.log
 LogFileSize=0
 Server=100.66.253.1
 ServerActive=100.66.253.1
-Hostname=sh_hci201
+Hostname=sh_hci204
 EnableRemoteCommands=1
 UnsafeUserParameters=1
 EOF
 
+#查看Hostname
+
+cat install_zabbix-agent_HCI.sh | grep Hostname
+
 #启动zabbix
-/root/zabbix/sbin/zabbix_agentd -c ../conf/zabbix_agentd.conf
+/root/zabbix/sbin/zabbix_agentd -c /root/zabbix/conf/zabbix_agentd.conf
