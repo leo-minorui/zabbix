@@ -11,7 +11,25 @@ sudo sed -e 's|^mirrorlist=|#mirrorlist=|g' \
          /etc/yum.repos.d/CentOS-*.repo
 
 ```
+### 配置时间同步ntp
+| 配置同步阿里云和腾讯云的ntp，自建两台虚拟机做冗余ntp1:10.127.127.82 ntp2:10.127.127.83
 
+**Centos**
+```shell
+yum install -y ntp
+sed -i 's/^server/#server/g' /etc/ntp.conf
+sed -i '7i\server 10.127.127.82' /etc/ntp.conf
+sed -i '7i\server 10.127.127.83' /etc/ntp.conf
+systemctl restart ntpd && systemctl enable ntpd
+```
+**Ubuntu**
+```shell
+apt-get install -y ntp
+sed -i 's/^server/#server/g' /etc/ntp.conf
+sed -i '7i\server 10.127.127.82' /etc/ntp.conf
+sed -i '7i\server 10.127.127.83' /etc/ntp.conf
+systemctl restart ntp.service && systemctl enable ntp.service
+```
 ### 建立SFTP用户数据传输
 `IP:10.127.127.80` 
 
