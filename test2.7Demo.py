@@ -5,7 +5,6 @@ import subprocess
 import os
 import time
 
-
 class ZabbixAPI(object):
     __id = 0
     __auth = ''

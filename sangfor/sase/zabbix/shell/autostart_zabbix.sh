@@ -105,7 +105,7 @@ if [ -d $zabbix_install_path ];then
             fi
         fi
 else
-        echo -e "/opt/zabbix content is not exists,please install zabbix_agent first!"
+        echo -e "/etc/zabbix content is not exists,please install zabbix_agent first!"
 fi
 ##############################
  

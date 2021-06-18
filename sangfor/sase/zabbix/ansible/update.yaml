@@ -1,0 +1,30 @@
+- name: update the vac code
+  host: vac
+  serial: 20
+  remote_user: admin
+  tasks:
+  - name: ping the vac
+    ansible.builtin.ping:
+
+  - name: copy package to hosts
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: "/etc/{{ item }}"
+    loop:
+      - ./zabbix_agent-5.2.1-linux-3.0-amd64-static.tar.gz
+  
+  - name: decompression && install
+    ansible.builtin.command:
+      argv:
+        - tar
+        - zxvf
+        - /etc/zabbix_agent-5.2.1-linux-3.0-amd64-static.tar.gz
+        - -C /etc/zabbix
+    args:
+      chdir: /etc/
+
+  - name: config
+    ansible.builtin.command:
+      argv:
+        - cat </etc/zabbix/zabbix_agentd.conf<<EOF
+
