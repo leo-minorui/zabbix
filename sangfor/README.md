@@ -30,6 +30,15 @@ sed -i '7i\server 10.127.127.82' /etc/ntp.conf
 sed -i '7i\server 10.127.127.83' /etc/ntp.conf
 systemctl restart ntp.service && systemctl enable ntp.service
 ```
+
+**修改时区**
+```shell
+1.先查看时区是否为CST date
+2.如果不是：
+sudo rm -f /etc/localtime
+sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+
 ### 建立SFTP用户数据传输
 `IP:10.127.127.80` 
 
